@@ -1,5 +1,7 @@
 #pragma once
+
 #include <raylib.h>
+#include "Scene/Scene.h"
 
 class Game {
 public:
@@ -7,17 +9,27 @@ public:
     ~Game();
 
     void setup();
-    void frame_start();
-    void handle_events();
+    void frameStart();
+    void frameEnd();
+    void handleEvents();
     void update();
     void render();
-    void frame_end();
     void clean();
-    bool running();
+    bool running() const;
 
-private:
-    int counter;
-    int screen_width;
-    int screen_height;
-    bool isRunning;
+    void run();
+
+    void setScene(Scene* newScene);
+    Scene* getCurrentScene() const;
+
+protected:
+    bool isRunning = false;
+    int screen_width = 0;
+    int screen_height = 0;
+
+    float dT = 0.0f;
+    float FPS = 0.0f;
+    int frameCount = 0;
+
+    Scene* currentScene;
 };

@@ -9,15 +9,21 @@ set(CMAKE_CXX_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(raylib REQUIRED)
 
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
-add_executable(${PROJECT_NAME} src/main.cpp ${SOURCES} src/Game/Game.cpp src/Game/Game.h)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+        "${PROJECT_SOURCE_DIR}/src/*.cpp"
+        )
+
+add_executable(${PROJECT_NAME}
+        src/main.cpp
+        ${SOURCES}
+        )
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE ${PROJECT_SOURCE_DIR}/include
-        PUBLIC ${PROJECT_SOURCE/DIR}/src
+        PUBLIC ${PROJECT_SOURCE_DIR}/src
+        ${PROJECT_SOURCE_DIR}/external
         )
-
 target_link_libraries(${PROJECT_NAME}
         raylib
         )

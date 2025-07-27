@@ -1,157 +1,95 @@
-#include <raylib.h>
-#include <iostream>
 #include "Game.h"
-#include <vector>
-
-
-Rectangle ball;
-Rectangle paddle;
-std::vector<Rectangle> blocks;
-std::vector<Color> blockColors = {
-         LIME , GREEN, BLUE, SKYBLUE, PINK, ORANGE
-};
-std::vector<Color> colors_asigned;
-
-int blocks_quantity = 0;
-int ball_sx = 150;
-int ball_sy = 150;
-int paddle_sx = 200;
+#include <format>
+#include <iostream>
 
 Game::Game(const char* title, int width, int height)
-        : screen_width(width), screen_height(height) {
+        : screen_width(width), screen_height(height)
+{
     InitWindow(width, height, title);
-    std::cout << "Game started" << std::endl;
+    SetTargetFPS(60);
+    std::cout << "Game start" << std::endl;
     isRunning = true;
-    counter = 0;
+    frameCount = 0;
+    dT = 0.0f;
+    FPS = 0.0f;
 }
 
 Game::~Game() {
-
+    clean();
 }
 
 void Game::setup() {
-    SetTargetFPS(60);
-
-    ball = Rectangle{10, 100, 15, 15};
-    paddle = Rectangle{(float)(screen_width/2) - ball.width*5, (float)screen_height - 15, ball.width*10, 15};
-    int rows = 5;
-    int cols = 8;
-    float blockWidth = screen_width / cols;
-    float blockHeight = 20;
-
-    blocks.clear();
-
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            Rectangle b = {
-                    j * blockWidth,
-                    i * blockHeight,
-                    blockWidth - 2,
-                    blockHeight - 2
-            };
-            blocks.push_back(b);
-
-            Color c = blockColors[i % blockColors.size()];
-            colors_asigned.push_back(c);
-        }
+    if (currentScene) {
+        currentScene->setup();
     }
-
-    blocks_quantity = blocks.size();
 }
 
-void Game::frame_start() {
-    std::cout << "Frame " << counter << " started" << std::endl;
-    BeginDrawing();
+void Game::frameStart() {
+    std::cout << "Frame Start:" << frameCount << std::endl;
+    dT = GetFrameTime(); // seconds
 }
 
-void Game::frame_end() {
-    std::cout << "Frame " << counter << " ended" << std::endl;
-    EndDrawing();
-    counter++;
+void Game::frameEnd() {
+    frameCount++;
+    FPS = static_cast<float>(GetFPS());
+    std::cout << "Frame End: " << frameCount << ", FPS: " << FPS << std::endl;
 }
 
-void Game::handle_events() {
-    float dT = GetFrameTime();  // seconds
+void Game::handleEvents() {
     if (WindowShouldClose()) {
         isRunning = false;
-    }
-    if (IsKeyDown(KEY_RIGHT)) {
-        paddle.x += paddle_sx * dT;
-        if (paddle.x + paddle.width > screen_width) {
-            paddle.x = screen_width - paddle.width;
-        }
-    }
-
-    if (IsKeyDown(KEY_LEFT)) {
-        paddle.x -= paddle_sx * dT;
-        if (paddle.x < 0) {
-            paddle.x = 0;
-        }
     }
 }
 
 void Game::update() {
-    float dT = GetFrameTime();
-    if (ball.x >= screen_width) {
-        ball_sx *= -1;
+    if (currentScene) {
+        currentScene->update();
     }
-    if (ball.x < 0) {
-        ball_sx *= -1;
-    }
-    if (ball.y >= screen_height) {
-        std::cout << "Game over:(" << std::endl;
-        exit(1);
-    }
-    if (CheckCollisionRecs(ball, paddle)) {
-        float hitPos = (ball.x + ball.width / 2.0f) - (paddle.x + paddle.width / 2.0f);
-        float normalized = hitPos / (paddle.width / 2.0f);
-        ball_sx = normalized * 200;
-        ball_sy *= -1;
-    }
-    if (ball.y < 0) {
-        ball_sy *= -1;
-    }
-
-    ball.x += ball_sx * dT;
-    ball.y += ball_sy * dT;
-
-    // Collision with blocks
-    for (size_t i = 0; i < blocks.size(); i++) {
-        if (CheckCollisionRecs(ball, blocks[i])) {
-            ball_sy *= -1;
-            blocks.erase(blocks.begin() + i);
-            colors_asigned.erase(colors_asigned.begin() + i);
-            blocks_quantity--;
-
-            break;
-        }
-    }
-
-    if (blocks_quantity <= 0) {
-        std::cout << "You win!!!" << std::endl;
-        exit(0);
-    }
-
-    ball.x += ball_sx * dT;
-    ball.y += ball_sy * dT;
-
 }
 
 void Game::render() {
-    ClearBackground(WHITE);
+    BeginDrawing();
+    ClearBackground(BLACK);
 
-    DrawRectangleRec(ball, BLACK);
-    DrawRectangleRec(paddle, BLACK);
-    for (size_t i = 0; i < blocks.size(); i++) {
-        DrawRectangleRec(blocks[i], colors_asigned[i]);
+    if (currentScene) {
+        currentScene->render();
     }
-    DrawText(TextFormat("Blocks left: %d", blocks_quantity), screen_width - 200, screen_height - 80, 20, GRAY);
+
+    DrawText(TextFormat("FPS: %.2f", FPS), 10, 10, 20, DARKGRAY);
+
+
+    EndDrawing();
 }
 
 void Game::clean() {
-    CloseWindow();
+    if (!WindowShouldClose()) {
+        CloseWindow();
+    }
+    std::cout << "Game Over" << std::endl;
 }
 
-bool Game::running() {
+bool Game::running() const {
     return isRunning;
+}
+
+void Game::run() {
+    setup();
+
+    while (running()) {
+        frameStart();
+        handleEvents();
+        update();
+        render();
+        frameEnd();
+    }
+
+    clean();
+}
+
+void Game::setScene(Scene* newScene) {
+    currentScene = std::move(newScene);
+}
+
+Scene* Game::getCurrentScene() const {
+    return currentScene;
 }

@@ -15,11 +15,12 @@ Scene::~Scene()
     // Do not delete systems; user manages their lifetime
 }
 
-Entity Scene::createEntity(const std::string& name, int x, int y)
+Entity Scene::createEntity(const std::string& name, int x, int y, Color color)
 {
     Entity entity = { r.create(), this };
     entity.addComponent<NameComponent>(name);
     entity.addComponent<TransformComponent>(Vector2{ static_cast<float>(x), static_cast<float>(y) });
+    entity.addComponent<SpriteComponent>(color);
     return entity;
 }
 

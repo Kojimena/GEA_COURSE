@@ -22,7 +22,8 @@ public:
     Entity createEntity(
             const std::string& name = "NO NAME",
             int x = 0,
-            int y = 0
+            int y = 0,
+            Color color = WHITE
     );
 
     void addSystem(System* system);

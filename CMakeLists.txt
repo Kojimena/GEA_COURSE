@@ -16,8 +16,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 
 add_executable(${PROJECT_NAME}
         src/main.cpp
-        ${SOURCES}
-        )
+        ${SOURCES})
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE ${PROJECT_SOURCE_DIR}/include

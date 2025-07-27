@@ -1,5 +1,10 @@
-#include <iostream>
-int main() {
-    std::cout << "Hello, World!" << std::endl;
+#include "Breakout/Breakout.h"
+
+int main()
+{
+    // Initialize the Breakout game
+    Breakout breakout = Breakout();
+    breakout.run();
+
     return 0;
 }

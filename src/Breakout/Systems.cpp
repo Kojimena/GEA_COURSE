@@ -7,7 +7,7 @@
 class HelloSystem : public System {
 public:
     void setup() override {
-        std::cout << "Hello, Pong ECS World!" << std::endl;
+        std::cout << "Hello, BreakOut!" << std::endl;
     }
 };
 
@@ -46,6 +46,7 @@ public:
         auto ballView = scene->r.view<NameComponent, TransformComponent, SizeComponent, VelocityComponent, ColliderComponent>();
         auto paddleView = scene->r.view<PlayerComponent, TransformComponent, SizeComponent>();
         auto brickView = scene->r.view<TransformComponent, SizeComponent, BrickComponent>();
+        constexpr float speedUp = 1.05f;
 
         for (auto ball : ballView) {
             auto& ballPos = ballView.get<TransformComponent>(ball).position;
@@ -53,34 +54,64 @@ public:
             auto& ballVel  = ballView.get<VelocityComponent>(ball).velocity;
             auto& ballCol  = ballView.get<ColliderComponent>(ball);
 
-            // Wall collision (left/right)
-            if (ballPos.x <= 0 || ballPos.x + ballSize.width >= GetScreenWidth()) {
-                ballVel.x *= -1.0f;
+            // left
+            if (ballPos.x <= 0.0f) {
+                // invert velocity and speed up
+                ballVel.x =  std::abs(ballVel.x) * speedUp;
+                ballPos.x = 0.0f;
             }
+            // right
+            else if (ballPos.x + ballSize.width >= GetScreenWidth()) {
+                ballVel.x = -std::abs(ballVel.x) * speedUp;
+                ballPos.x = GetScreenWidth() - ballSize.width;
+            }
+
             // Ceiling collision
-            if (ballPos.y <= 0) {
-                ballVel.y *= -1.0f;
+            if (ballPos.y <= 0.0f) {
+                ballVel.y =  std::abs(ballVel.y) * speedUp;
+                ballPos.y = 0.0f;
             }
+
             // Floor (lose)
             if (ballPos.y + ballSize.height >= GetScreenHeight()) {
-                std::cout << "Game Over!" << std::endl;
-                ballVel = {0, 0};
+                std::cout << "¡You lost!" << std::endl;
+                BeginDrawing();
+                ClearBackground(BLACK);
+                DrawText("¡You lost!",
+                         GetScreenWidth()/2 - MeasureText("¡You lost!", 40)/2,
+                         GetScreenHeight()/2 - 20,
+                         40, RED);
+                EndDrawing();
+
+                WaitTime(2.0f);
+
+                CloseWindow();
+                exit(0);
             }
 
             // Paddle collision
             for (auto paddle : paddleView) {
-                auto& padPos = paddleView.get<TransformComponent>(paddle).position;
+                auto& padPos  = paddleView.get<TransformComponent>(paddle).position;
                 auto& padSize = paddleView.get<SizeComponent>(paddle);
 
-                bool overlapX = ballPos.x < padPos.x + padSize.width && ballPos.x + ballSize.width > padPos.x;
-                bool overlapY = ballPos.y + ballSize.height > padPos.y && ballPos.y < padPos.y + padSize.height;
+                bool overlapX = ballPos.x < padPos.x + padSize.width
+                                && ballPos.x + ballSize.width > padPos.x;
+                bool overlapY = ballPos.y + ballSize.height > padPos.y
+                                && ballPos.y < padPos.y + padSize.height;
 
                 if (overlapX && overlapY) {
-                    ballVel.y *= -1.1f; // bounce and speed up
-                    ballVel.x *= 1.05f;
-                    ballCol.triggered = true;
+                    if (!ballCol.triggered) {
+                        // increase ball velocity and bounce
+                        ballVel.y = -ballVel.y;
+                        ballVel.y *= 1.1f;
+                        ballVel.x *= 1.1f;
+                        ballCol.triggered = true;
+                    }
+                } else {
+                    ballCol.triggered = false;
                 }
             }
+
 
             // Brick collision
             for (auto brick : brickView) {
@@ -100,6 +131,35 @@ public:
                     scene->r.destroy(brick); // destroy the brick
                 }
             }
+
+            // Check if all bricks are destroyed
+            if (scene->r.view<BrickComponent>().empty()) {
+                std::cout << "¡You won!" << std::endl;
+                BeginDrawing();
+                ClearBackground(BLACK);
+                DrawText("¡You won!",
+                         GetScreenWidth()/2 - MeasureText("¡You won!", 40)/2,
+                         GetScreenHeight()/2 - 20,
+                         40, GREEN);
+                EndDrawing();
+                WaitTime(2.0f);
+                CloseWindow();
+                exit(0);
+            }
+        }
+    }
+};
+
+class BoundsSystem : public System {
+public:
+    void update() override {
+        auto view = scene->r.view<TransformComponent, SizeComponent, PlayerComponent>();
+        for (auto e : view) {
+            auto& pos  = view.get<TransformComponent>(e).position;
+            auto& size = view.get<SizeComponent>(e);
+            pos.x = std::clamp(pos.x,
+                               0.0f,
+                               GetScreenWidth() - size.width);
         }
     }
 };

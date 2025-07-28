@@ -17,8 +17,8 @@ Scene* Breakout::createGameplayScene() {
     Scene* gameplayScene = new Scene("Gameplay");
 
     // — Ball —
-    Entity ball = gameplayScene->createEntity("ball", 100, 100);
-    ball.addComponent<SizeComponent>(f(30), f(30));
+    Entity ball = gameplayScene->createEntity("ball", 100, 200);
+    ball.addComponent<SizeComponent>(f(24), f(24));
     ball.addComponent<ColliderComponent>(false);
     ball.addComponent<VelocityComponent>(Vector2{100, 100});
     ball.addComponent<SpriteComponent>(WHITE);
@@ -32,13 +32,21 @@ Scene* Breakout::createGameplayScene() {
     paddle.addComponent<SpriteComponent>(GRAY);
 
     // — Bricks —
-    Color pal[6]={LIME,GREEN,BLUE,SKYBLUE,PINK,ORANGE};
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 5; ++j) {
-            Entity brick = gameplayScene->createEntity("brick", i * 60 + 20, j * 30 + 50);
-            brick.addComponent<SizeComponent>(f(50), f(20));
-            brick.addComponent<SpriteComponent>(pal[j % 6]);
-            brick.addComponent<BrickComponent>();
+    Color blockColors[6] = { LIME, GREEN, BLUE, SKYBLUE, PINK, ORANGE };
+    const int rows = 5;
+    const int cols = 8;
+    float bw = GetScreenWidth()  / float(cols);
+    float bh = 20.0f;
+
+    for(int i = 0; i < rows; ++i){
+        for(int j = 0; j < cols; ++j){
+            auto blk = gameplayScene->createEntity("block",
+                                                   j * bw,
+                                                   i * bh
+            );
+            blk.addComponent<SizeComponent>(bw - 2.0f, bh - 2.0f);
+            blk.addComponent<BrickComponent>();
+            blk.addComponent<SpriteComponent>(blockColors[i]);
         }
     }
 
@@ -46,6 +54,7 @@ Scene* Breakout::createGameplayScene() {
     gameplayScene->addSystem(new HelloSystem());
     gameplayScene->addSystem(new InputSystem());
     gameplayScene->addSystem(new MovementSystem());
+    gameplayScene->addSystem(new BoundsSystem());
     gameplayScene->addSystem(new CollisionSystem());
     gameplayScene->addSystem(new RenderSystem());
 

@@ -2,6 +2,7 @@
 #include "Components.h"
 #include "ECS/Entity.h"
 #include "Systems.cpp"
+#include "ImGui/ImGui.h"
 
 Breakout::Breakout() : Game("Breakout", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createGameplayScene();
@@ -26,7 +27,7 @@ Scene* Breakout::createGameplayScene() {
 
     // — Paddle —
     Entity paddle = gameplayScene->createEntity("paddle", (screen_width / 2) - 50, screen_height - 20);
-    paddle.addComponent<SizeComponent>(f(100), f(20));
+    paddle.addComponent<SizeComponent>(f(200), f(20));
     paddle.addComponent<PlayerComponent>(f(200));
     paddle.addComponent<VelocityComponent>(Vector2{0, 0});
     paddle.addComponent<SpriteComponent>(GRAY);
@@ -57,6 +58,8 @@ Scene* Breakout::createGameplayScene() {
     gameplayScene->addSystem(new BoundsSystem());
     gameplayScene->addSystem(new CollisionSystem());
     gameplayScene->addSystem(new RenderSystem());
+    gameplayScene->addSystem(new ImGuiSystem());
+
 
     return gameplayScene;
 }

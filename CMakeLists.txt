@@ -12,6 +12,9 @@ find_package(raylib REQUIRED)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
         "${PROJECT_SOURCE_DIR}/src/*.cpp"
+        "${PROJECT_SOURCE_DIR}/external/rlImGui/rlImGui.cpp"
+        "${PROJECT_SOURCE_DIR}/external/imGui/*.cpp"
+
         )
 
 add_executable(${PROJECT_NAME}
@@ -22,6 +25,8 @@ target_include_directories(${PROJECT_NAME}
         PRIVATE ${PROJECT_SOURCE_DIR}/include
         PUBLIC ${PROJECT_SOURCE_DIR}/src
         ${PROJECT_SOURCE_DIR}/external
+        PUBLIC ${PROJECT_SOURCE_DIR}/external/rlImGui
+        PUBLIC ${PROJECT_SOURCE_DIR}/external/imGui
         )
 target_link_libraries(${PROJECT_NAME}
         raylib

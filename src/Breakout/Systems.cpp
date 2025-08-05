@@ -122,11 +122,12 @@ public:
                 bool overlapY = ballPos.y + ballSize.height > brickPos.y && ballPos.y < brickPos.y + brickSize.height;
 
                 if (overlapX && overlapY) {
-                    // Bounce off the brick
-                    if (ballPos.y + ballSize.height <= brickPos.y || ballPos.y >= brickPos.y + brickSize.height) {
-                        ballVel.y *= -1.0f; // bounce vertically
-                    } else {
-                        ballVel.x *= -1.0f; // bounce horizontally
+                    if (!ballCol.triggered) {
+                        // increase ball velocity and bounce
+                        ballVel.y = -ballVel.y;
+                        ballVel.y *= 1.1f;
+                        ballVel.x *= 1.1f;
+                        ballCol.triggered = true;
                     }
                     scene->r.destroy(brick); // destroy the brick
                 }

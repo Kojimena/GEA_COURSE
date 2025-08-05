@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "ImGui/ImGui.h"
 #include <format>
 #include <iostream>
 
@@ -78,7 +79,10 @@ void Game::run() {
     while (running()) {
         frameStart();
         handleEvents();
-        update();
+
+        if (!ImGuiSystem::isPaused) {
+            update();
+        }
         render();
         frameEnd();
     }

@@ -4,10 +4,13 @@ Un clon de **Breakout** implementado con **ECS** (EnTT), **Raylib** y ImGUI en C
 
 ---
 
-## Integración con ImGui
+## ImGui
 Con la integración de ImGui ahora se tienen 3 paneles: entidades, componentes y controles.
 En el panel izquierdo se observan todos las entidades, al seleccionar una nos muestra los componentes de dicha entidad en el panel derecho y en el panel de controles se puede realizar una pausa del juego, en este modo también es posible editar los valores de los paneles.
 
+| ImGui                            |
+|----------------------------------|
+| ![Gameplay](media/imgui.mov.gif) |
 
 ## Descripción 
 
@@ -18,23 +21,6 @@ En el panel izquierdo se observan todos las entidades, al seleccionar una nos mu
 - Cuando destruyes todos los bloques, ganas.
 
 ---
-
-## Demostraciones
-
-| Jugando                                      | 
-|---------------------------------------------|
-| ![Gameplay](gameplay.gif)                    |
-
-|You Win                                    |
-|--------------------------------------------|
-| ![You Win](you_win.gif)                    | 
-
-| You Lost                 |
-|--------------------------|
-| ![You Lose](you_lost.gif) |
-
-
-
 
 
 

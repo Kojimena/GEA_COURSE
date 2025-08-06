@@ -59,6 +59,7 @@ void ImGuiSystem::render() {
 
 
 void ShowComponentProperties(entt::registry& registry, entt::entity entity) {
+    // Properties for the selected entity
 
     //  TransformComponent
     if (registry.all_of<TransformComponent>(entity)) {
@@ -75,8 +76,20 @@ void ShowComponentProperties(entt::registry& registry, entt::entity entity) {
     }
 
     //  SpriteComponent
-//    if (registry.all_of<SpriteComponent>(entity)) {
-//        auto& sprite = registry.get<SpriteComponent>(entity);
-//        ImGui::ColorEdit3("Color", (float*)&sprite.color);
-//    }
+    if (registry.all_of<SpriteComponent>(entity)) {
+        auto& sprite = registry.get<SpriteComponent>(entity);
+
+        float color[4] = {
+            sprite.color.r / 255.0f,
+            sprite.color.g / 255.0f,
+            sprite.color.b / 255.0f,
+            sprite.color.a / 255.0f
+        };
+
+        ImGui::ColorEdit4("Color", color);
+
+        sprite.color.r = static_cast<unsigned char>(color[0] * 255.0f);
+        sprite.color.g = static_cast<unsigned char>(color[1] * 255.0f);
+        sprite.color.b = static_cast<unsigned char>(color[2] * 255.0f);
+    }
 }

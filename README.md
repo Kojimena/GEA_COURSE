@@ -1,8 +1,13 @@
-# Breakout ECS
+# Breakout ECS 
 
-Un clon de **Breakout** implementado con **ECS** (EnTT) y **Raylib** en C++.
+Un clon de **Breakout** implementado con **ECS** (EnTT), **Raylib** y ImGUI en C++.
 
 ---
+
+## Integración con ImGui
+Con la integración de ImGui ahora se tienen 3 paneles: entidades, componentes y controles.
+En el panel izquierdo se observan todos las entidades, al seleccionar una nos muestra los componentes de dicha entidad en el panel derecho y en el panel de controles se puede realizar una pausa del juego, en este modo también es posible editar los valores de los paneles.
+
 
 ## Descripción 
 

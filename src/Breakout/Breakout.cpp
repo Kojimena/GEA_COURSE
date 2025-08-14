@@ -5,11 +5,16 @@
 #include "ImGui/ImGui.h"
 
 Breakout::Breakout() : Game("Breakout", SCREEN_WIDTH, SCREEN_HEIGHT) {
-    Scene* gameplayScene = createGameplayScene();
+    Scene* gameplayScene = createSpriteScene();
     setScene(gameplayScene);
 }
 
 Breakout::~Breakout() {
+}
+
+Scene* Breakout::createSpriteScene() {
+    Scene* gameplayScene = new Scene("Sprite");
+    return gameplayScene;
 }
 
 inline float f(int x) { return static_cast<float>(x); }

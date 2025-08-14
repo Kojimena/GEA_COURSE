@@ -13,4 +13,6 @@ public:
 
 private:
     Scene* createGameplayScene();
+    Scene* createSpriteScene();
+
 };

@@ -18,7 +18,7 @@ Scene* Breakout::createSpriteScene() {
     Scene* s = new Scene("Sprite");
     // Create a sprite entity
     Entity girl = s->createEntity("girl", 0, 0);
-    girl.addComponent<SpriteLayerComponent>("../src/assets/girl.png", 32, 4);
+    girl.addComponent<SpriteLayerComponent>("../src/assets/girl.png", 32, 4, 0, 0);
     s->addSystem(new SpriteSystem());
     return s;
 }

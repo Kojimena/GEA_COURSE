@@ -5,11 +5,8 @@
 class SpriteSystem : public System {
 public:
 
-    void update() override {
-        // Update logic for sprites can be added here
-    }
+    void setup() override;
 
-    void render() override {
-        // Render logic for sprites can be added here
-    }
+    void render() override;
+
 };

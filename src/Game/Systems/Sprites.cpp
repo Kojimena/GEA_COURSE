@@ -27,6 +27,28 @@ void SpriteSystem::setup() {
     }
 }
 
+
+void SpriteSystem::update() {
+    auto view = scene->r.view<SpriteLayerComponent>();
+    long now = GetTime() * 1000; // Convert to milliseconds
+    for (auto entity : view) {
+        auto& sprite = view.get<SpriteLayerComponent>(entity);
+
+
+        if (sprite.animationFrame > 0) {
+            float timeSinceLastUpdate = now - sprite.lastUpdate;
+
+            int framesToUpdate = timeSinceLastUpdate / (sprite.animationDuration / sprite.animationFrame);
+            if (framesToUpdate > 0) {
+                sprite.ix += framesToUpdate;
+                sprite.ix %= sprite.animationFrame; // Wrap around the animation frame
+                sprite.lastUpdate = now; // Update the last update time
+            }
+        }
+
+    }
+}
+
 void SpriteSystem::render() {
     auto view = scene->r.view<TransformComponent, SpriteLayerComponent>();
 
@@ -35,8 +57,8 @@ void SpriteSystem::render() {
         const auto& sprite    = view.get<SpriteLayerComponent>(entity);
 
         Rectangle src = {
-                (float)0.0 + (float)sprite.ox,
-                (float)0.0 + (float)sprite.oy,
+                (float)sprite.ix * (float)sprite.size,
+                (float)sprite.iy * (float)sprite.size,
                 (float)sprite.size,
                 (float)sprite.size,
         };

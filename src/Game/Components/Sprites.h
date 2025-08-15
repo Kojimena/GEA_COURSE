@@ -6,12 +6,17 @@ struct SpriteLayerComponent{
     std::string path;
     int size = 32; // Default size for the sprite
     int scale = 4; // Scale factor for the sprite
-    Texture2D texture; // Texture for the sprite
+
+    int animationFrame = 8;
+    int animationDuration = 5; // Speed of the animation
 
     int ox = 32;
     int oy = 32;
 
-    SpriteLayerComponent() = default;
-    SpriteLayerComponent(std::string p, int s, int sc, int ox_, int oy_)
-            : path(std::move(p)), size(s), scale(sc), texture{}, ox(ox_), oy(oy_) {}
+    int ix = 0; // Index for sprite sheet
+    int iy = 0; // Index for sprite sheet
+
+    Texture2D texture; // Texture for the sprite
+
+    long lastUpdate = 0; // Last update time for animation
 };

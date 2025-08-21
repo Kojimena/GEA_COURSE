@@ -3,6 +3,7 @@
 #include "../../Scene/Scene.h"
 #include "../Graphics/TextureManager.h"
 #include "../Components/Sprites.h"
+#include "Game/Components/Player.h"
 #include <iostream>
 #include <filesystem>
 
@@ -86,7 +87,7 @@ void SpriteSystem::render() {
 // CONTROLES Y ANIMACIÓN DEL PERSONAJE
 
 void SpriteMovementSystem::update() {
-    auto view = scene->r.view<TransformComponent, SpriteLayerComponent>();
+    auto view = scene->r.view<TransformComponent, SpriteLayerComponent, PlayerComponent>();
 
     const float moveSpeed = 120.0f * GetFrameTime();
     const bool attackPressed = IsKeyDown(KEY_SPACE);

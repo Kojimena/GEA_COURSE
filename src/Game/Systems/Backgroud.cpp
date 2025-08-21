@@ -1,3 +1,4 @@
+#include "../Components/Background.h"
 #include "Background.h"
 #include "Scene/Scene.h"
 

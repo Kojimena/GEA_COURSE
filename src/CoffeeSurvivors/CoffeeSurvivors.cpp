@@ -8,6 +8,7 @@
 #include "Game/Systems/Background.h"
 #include "Game/Components/Enemy.h"
 #include "Game/Systems/Enemy.h"
+#include "Game/Components/Background.h"
 
 
 CoffeeSurvivors::CoffeeSurvivors() : Game("CoffeeSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
@@ -22,7 +23,6 @@ Scene* CoffeeSurvivors::createSpriteScene() {
 
 
     Scene* s = new Scene("Sprite");
-    // ====== FONDO ======
     {
         Entity bg = s->createEntity("bg", 0, 0);
         bg.addComponent<BackgroundComponent>(BackgroundComponent{

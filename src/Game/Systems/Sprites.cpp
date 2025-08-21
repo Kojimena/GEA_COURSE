@@ -30,22 +30,23 @@ void SpriteSystem::setup() {
 
 void SpriteSystem::update() {
     auto view = scene->r.view<SpriteLayerComponent>();
-    long now = GetTime() * 1000; // Convert to milliseconds
-    for (auto entity : view) {
-        auto& sprite = view.get<SpriteLayerComponent>(entity);
+    long nowMs = (long)(GetTime() * 1000.0); // ms
 
+    for (auto e : view) {
+        auto &sp = view.get<SpriteLayerComponent>(e);
 
-        if (sprite.animationFrame > 0) {
-            float timeSinceLastUpdate = now - sprite.lastUpdate;
+        if (sp.animationFrame <= 0) continue;
 
-            int framesToUpdate = timeSinceLastUpdate / (sprite.animationDuration / sprite.animationFrame);
-            if (framesToUpdate > 0) {
-                sprite.ix += framesToUpdate;
-                sprite.ix %= sprite.animationFrame; // Wrap around the animation frame
-                sprite.lastUpdate = now; // Update the last update time
-            }
+        int cycleMs = sp.animationDuration;
+        if (cycleMs <= 0) cycleMs = 100;
+        int msPerFrame = cycleMs / sp.animationFrame;
+        if (msPerFrame <= 0) msPerFrame = 16;
+
+        if (nowMs - sp.lastUpdate >= msPerFrame) {
+            int steps = (nowMs - sp.lastUpdate) / msPerFrame;
+            sp.ix = (sp.ix + steps) % sp.animationFrame;
+            sp.lastUpdate = nowMs;
         }
-
     }
 }
 
@@ -78,5 +79,50 @@ void SpriteSystem::render() {
             0.0f,
             WHITE
         );
+    }
+}
+
+
+// CONTROLES Y ANIMACIÓN DEL PERSONAJE
+
+void SpriteMovementSystem::update() {
+    auto view = scene->r.view<TransformComponent, SpriteLayerComponent>();
+
+    const float moveSpeed = 120.0f * GetFrameTime();
+    const bool attackPressed = IsKeyDown(KEY_SPACE);
+
+    for (auto e : view) {
+        auto &t  = view.get<TransformComponent>(e);
+        auto &sp = view.get<SpriteLayerComponent>(e);
+
+        float dx = 0.0f, dy = 0.0f;
+        if (!attackPressed) {
+            if (IsKeyDown(KEY_RIGHT) ) dx += moveSpeed;
+            if (IsKeyDown(KEY_LEFT)  )dx -= moveSpeed;
+            if (IsKeyDown(KEY_DOWN) )dy += moveSpeed;
+            if (IsKeyDown(KEY_UP) ) dy -= moveSpeed;
+        }
+
+        if (attackPressed) {
+            if (sp.iy != 1) { sp.iy = 1; sp.ix = 0; sp.lastUpdate = (long)(GetTime()*1000.0); }
+            sp.animationFrame    = 8;
+            sp.animationDuration = 500;
+
+        } else {
+            const bool moving = (std::fabs(dx) > 0.0f || std::fabs(dy) > 0.0f);
+            if (moving) {
+                if (sp.iy != 0) { sp.iy = 0; sp.lastUpdate = (long)(GetTime()*1000.0); }
+                sp.animationFrame    = 8;
+                sp.animationDuration = 600;
+            } else {
+                sp.iy = 0;
+                sp.ix = 0;
+                sp.animationFrame    = 1;
+                sp.animationDuration = 1000;
+            }
+        }
+
+        t.position.x += dx;
+        t.position.y += dy;
     }
 }

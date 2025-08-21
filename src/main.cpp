@@ -1,10 +1,10 @@
-#include "Breakout/Breakout.h"
+#include "CoffeeSurvivors/CoffeeSurvivors.h"
 
 int main()
 {
     // Initialize the Breakout game
-    Breakout breakout = Breakout();
-    breakout.run();
+    CoffeeSurvivors coffegame = CoffeeSurvivors();
+    coffegame.run();
 
     return 0;
 }

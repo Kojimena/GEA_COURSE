@@ -2,13 +2,14 @@
 #include "Game/Components/Sprites.h"
 #include "ECS/Entity.h"
 #include "Game/Systems/Sprites.h"
-#include "ImGui/ImGui.h"
 #include "./Game/Components/Player.h"
-#include "Game/Systems/Sprites.h"
-#include "Game/Systems/Background.h"
 #include "Game/Components/Enemy.h"
 #include "Game/Systems/Enemy.h"
 #include "Game/Components/Background.h"
+#include "Game/Systems/TilemapRender.h"
+#include "Game/Systems/AutoTiling.h"
+#include "Game/Components/Tilemap.h"
+#include "Game/Components/TilemapData.h"
 
 
 CoffeeSurvivors::CoffeeSurvivors() : Game("CoffeeSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
@@ -60,15 +61,57 @@ Scene* CoffeeSurvivors::createSpriteScene() {
         return e;
     };
 
-// Ejemplos:
+    {
+        Entity tilemapEntity = s->createEntity("tilemap", 0, 0);
+        auto& tilemap = tilemapEntity.addComponent<TileMapComponent>();
+        const int H = static_cast<int>(TILEMAP_MAINMAP.size());
+        const int W = static_cast<int>(TILEMAP_MAINMAP.empty() ? 0 : TILEMAP_MAINMAP[0].size());
+
+        tilemap.width = W;
+        tilemap.height = H;
+        tilemap.tileSize = 16;
+
+        Texture2D grassTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/CoffeeTile.png");
+        Texture2D waterTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/MilkTile.png");
+
+        for (int y = 0; y < tilemap.height; y++) {
+            for (int x = 0; x < tilemap.width; x++) {
+                TileComponent tile;
+                tile.x = x;
+                tile.y = y;
+
+                switch (TILEMAP_MAINMAP[y][x]) {
+                    case 0:
+                        tile.type = COFFEE;
+                        tile.upTexture = grassTexture;
+                        tile.downTexture = waterTexture;
+                        tile.needsAutoTiling = true;
+                        break;
+                    case 1:
+                        tile.type = MILK;
+                        tile.upTexture = waterTexture;
+                        tile.needsAutoTiling = false;
+                        break;
+
+                }
+                tilemap.tiles.push_back(tile);
+
+
+            }
+        }
+
+    }
+
+
+
     makeEnemy(1000, 300, 360, 560);
     makeEnemy(1000, 300, 760, 960);
 
-
-    s->addSystem(new BackgroundSystem());
-    s->addSystem(new SpriteMovementSystem());  // jugador: mueve y setea anim
-    s->addSystem(new EnemyAISystem());         // enemigos: mueven y setean anim (lo agregamos abajo)
-    s->addSystem(new SpriteSystem());          // avanza frames y DIBUJA
+    s->addSystem(new AutoTilingSetupSystem());
+    s->addSystem(new TileMapRenderSystem());
+    s->addSystem(new SpriteMovementSystem());
+    s->addSystem(new EnemyAISystem());
+    s->addSystem(new SpriteSystem());
 
 
 

@@ -4,10 +4,13 @@
 
 struct SpriteLayerComponent{
     std::string path;
-    int size = 16; // Default size for the sprite
+
+    int frameW = 16;
+    int frameH = 16;
+
     int scale = 4; // Scale factor for the sprite
 
-    int animationFrame = 8;
+    int animationFrame = 4;
     int animationDuration = 600; // Speed of the animation
 
     int ox = 32;

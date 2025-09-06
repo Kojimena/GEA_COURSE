@@ -25,34 +25,28 @@ Scene* CoffeeSurvivors::createSpriteScene() {
 
     Scene* s = new Scene("Sprite");
     {
-        Entity bg = s->createEntity("bg", 0, 0);
-        bg.addComponent<BackgroundComponent>(BackgroundComponent{
-                .path = "../src/assets/bgcoffee.png",
-                .texture = {},
-                .parallax = 0.0f,
-                .stretchToScreen = true
-        });
     }
 
     // girl player entity
     Entity girl = s->createEntity("girl", 100, 100);
     girl.addComponent<SpriteLayerComponent>(
-            "../src/assets/girl.png",
-            32, //sprite size
-            4, // scale factor
-            8, // animation frames
+            "../src/assets/walk.png",
+            16, // frame width
+            32, // frame height
+            2, // scale factor
+            4, // animation frames
             600, // animation duration
             0,  // offset x
             0,  // offset y
-            1, // index x
+            0, // index x
             0); // index y
     girl.addComponent<PlayerComponent>();
 
     auto makeEnemy = [&](float x, float y, float l, float r) {
         Entity e = s->createEntity("enemy", x, y);
         e.addComponent<SpriteLayerComponent>(
-                "../src/assets/zombie.png",
-                32, 4, 8, 600, 0, 0, 0, 0
+                "../src/assets/enemy.png",
+                16,16, 2, 8, 600, 0, 0, 0, 0
         );
 
         e.addComponent<EnemyAIComponent>(EnemyAIComponent{
@@ -71,8 +65,9 @@ Scene* CoffeeSurvivors::createSpriteScene() {
         tilemap.height = H;
         tilemap.tileSize = 16;
 
-        Texture2D grassTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/CoffeeTile.png");
-        Texture2D waterTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/MilkTile.png");
+        Texture2D grassTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/Nightgrass.png");
+        Texture2D landTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/Land.png");
+        Texture2D tressTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/trees.png");
 
         for (int y = 0; y < tilemap.height; y++) {
             for (int x = 0; x < tilemap.width; x++) {
@@ -82,17 +77,22 @@ Scene* CoffeeSurvivors::createSpriteScene() {
 
                 switch (TILEMAP_MAINMAP[y][x]) {
                     case 0:
-                        tile.type = COFFEE;
+                        tile.type = GRASS;
                         tile.upTexture = grassTexture;
-                        tile.downTexture = waterTexture;
+                        tile.downTexture = landTexture;
                         tile.needsAutoTiling = true;
                         break;
                     case 1:
-                        tile.type = MILK;
-                        tile.upTexture = waterTexture;
+                        tile.type = LAND;
+                        tile.upTexture = landTexture;
                         tile.needsAutoTiling = false;
                         break;
-
+                    case 2:
+                        tile.type = TREES;
+                        tile.upTexture = tressTexture;
+                        tile.downTexture = landTexture;
+                        tile.needsAutoTiling = true;
+                        break;
                 }
                 tilemap.tiles.push_back(tile);
 

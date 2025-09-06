@@ -59,18 +59,21 @@ void SpriteSystem::render() {
         const auto& sprite    = view.get<SpriteLayerComponent>(entity);
 
         Rectangle src = {
-                (float)sprite.ix * (float)sprite.size,
-                (float)sprite.iy * (float)sprite.size,
-                (float)sprite.size,
-                (float)sprite.size,
+                (float)sprite.ix * (float)sprite.frameW,
+                (float)sprite.iy * (float)sprite.frameH,
+                (float)sprite.frameW,
+                (float)sprite.frameH
         };
 
         Rectangle dst = {
                 transform.position.x,
                 transform.position.y,
-                (float)sprite.size * (float)sprite.scale,
-                (float)sprite.size * (float)sprite.scale,
+                (float)sprite.frameW * (float)sprite.scale,
+                (float)sprite.frameH * (float)sprite.scale
         };
+
+        DrawTexturePro(sprite.texture, src, dst, {0,0}, 0.0f, WHITE);
+
         const float alpha = 0.4f;
         DrawTexturePro(
             sprite.texture,
@@ -112,7 +115,14 @@ void SpriteMovementSystem::update() {
         } else {
             const bool moving = (std::fabs(dx) > 0.0f || std::fabs(dy) > 0.0f);
             if (moving) {
-                if (sp.iy != 0) { sp.iy = 0; sp.lastUpdate = (long)(GetTime()*1000.0); }
+                // caminar a la derecha
+                if (dx > 0.0f) sp.iy = 3;
+                // caminar a la izquierda
+                else if (dx < 0.0f) sp.iy = 1;
+                // caminar abajo
+                else if (dy > 0.0f) sp.iy = 0;
+                // caminar arriba
+                else if (dy < 0.0f) sp.iy = 2;
                 sp.animationFrame    = 8;
                 sp.animationDuration = 600;
             } else {

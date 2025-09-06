@@ -5,8 +5,9 @@
 
 
 enum TileType {
-    MILK,
-    COFFEE,
+    LAND,
+    GRASS,
+    TREES,
 };
 
 

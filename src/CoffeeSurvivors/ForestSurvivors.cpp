@@ -1,4 +1,4 @@
-#include "CoffeeSurvivors.h"
+#include "ForestSurvivors.h"
 #include "Game/Components/Sprites.h"
 #include "ECS/Entity.h"
 #include "Game/Systems/Sprites.h"
@@ -12,15 +12,15 @@
 #include "Game/Components/TilemapData.h"
 
 
-CoffeeSurvivors::CoffeeSurvivors() : Game("CoffeeSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
+ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
     setScene(gameplayScene);
 }
 
-CoffeeSurvivors::~CoffeeSurvivors() {
+ForestSurvivors::~ForestSurvivors() {
 }
 
-Scene* CoffeeSurvivors::createSpriteScene() {
+Scene* ForestSurvivors::createSpriteScene() {
 
 
     Scene* s = new Scene("Sprite");

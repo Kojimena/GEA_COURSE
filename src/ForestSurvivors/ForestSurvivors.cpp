@@ -10,6 +10,9 @@
 #include "Game/Systems/AutoTiling.h"
 #include "Game/Components/Tilemap.h"
 #include "Game/Components/TilemapData.h"
+#include "Game/Components/Camera.h"
+#include "Game/Systems/Camera.h"
+
 
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
@@ -102,16 +105,39 @@ Scene* ForestSurvivors::createSpriteScene() {
 
     }
 
+    // --- CÁMARA ---
+    Entity camE = s->createEntity("camera", 0, 0);
+    auto &cam = camE.addComponent<Camera2DComponent>();
+    cam.followSmooth = 0.14f;
+    cam.deadzoneW = 160.0f;
+    cam.deadzoneH = 100.0f;
+    cam.targetZoom = 1.0f;
+
+
 
 
     makeEnemy(1000, 300, 360, 560);
     makeEnemy(1000, 300, 760, 960);
 
-    s->addSystem(new AutoTilingSetupSystem());
-    s->addSystem(new TileMapRenderSystem());
-    s->addSystem(new SpriteMovementSystem());
-    s->addSystem(new EnemyAISystem());
-    s->addSystem(new SpriteSystem());
+    // Setup
+    s->addSystem(new AutoTilingSetupSystem());  // calcula ix/iy de tiles, ya lo tienes
+    s->addSystem(new CameraSetupSystem());      // inicializa offset/zoom/world bounds
+
+    // Lógica
+    s->addSystem(new SpriteMovementSystem());   // mueve player con teclado
+    s->addSystem(new EnemyAISystem());          // IA horizontal enemigos
+    s->addSystem(new CameraFollowSystem());     // sigue al player (deadzone + clamp)
+    s->addSystem(new CameraEffectsSystem());    // aplica shake/zoom
+    s->addSystem(new CameraZoomInputSystem());
+
+
+    // Render Pass (con cámara)
+    s->addSystem(new CameraBeginRenderSystem()); // BeginMode2D
+    s->addSystem(new TileMapRenderSystem());     // dibuja tilemap
+    s->addSystem(new SpriteSystem());            // anima/dibuja sprites
+    s->addSystem(new CameraEndRenderSystem());   // EndMode2D
+
+
 
 
 

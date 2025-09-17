@@ -1,4 +1,4 @@
-#include "CoffeeSurvivors/ForestSurvivors.h"
+#include "ForestSurvivors/ForestSurvivors.h"
 
 int main()
 {

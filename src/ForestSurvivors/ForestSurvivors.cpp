@@ -9,9 +9,9 @@
 #include "Game/Systems/TilemapRender.h"
 #include "Game/Systems/AutoTiling.h"
 #include "Game/Components/Tilemap.h"
-#include "Game/Components/TilemapData.h"
 #include "Game/Components/Camera.h"
 #include "Game/Systems/Camera.h"
+#include "Game/Systems/TilemapSetupSystem.h"
 
 
 
@@ -58,52 +58,12 @@ Scene* ForestSurvivors::createSpriteScene() {
         return e;
     };
 
-    {
-        Entity tilemapEntity = s->createEntity("tilemap", 0, 0);
-        auto& tilemap = tilemapEntity.addComponent<TileMapComponent>();
-        const int H = static_cast<int>(TILEMAP_MAINMAP.size());
-        const int W = static_cast<int>(TILEMAP_MAINMAP.empty() ? 0 : TILEMAP_MAINMAP[0].size());
-
-        tilemap.width = W;
-        tilemap.height = H;
-        tilemap.tileSize = 16;
-
-        Texture2D grassTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/Nightgrass.png");
-        Texture2D landTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/Land.png");
-        Texture2D tressTexture = TextureManager::loadTexture("/Users/jime/10mo semestre/game_engine/GE_entt_breakout/src/assets/trees.png");
-
-        for (int y = 0; y < tilemap.height; y++) {
-            for (int x = 0; x < tilemap.width; x++) {
-                TileComponent tile;
-                tile.x = x;
-                tile.y = y;
-
-                switch (TILEMAP_MAINMAP[y][x]) {
-                    case 0:
-                        tile.type = GRASS;
-                        tile.upTexture = grassTexture;
-                        tile.downTexture = landTexture;
-                        tile.needsAutoTiling = true;
-                        break;
-                    case 1:
-                        tile.type = LAND;
-                        tile.upTexture = landTexture;
-                        tile.needsAutoTiling = false;
-                        break;
-                    case 2:
-                        tile.type = TREES;
-                        tile.upTexture = tressTexture;
-                        tile.downTexture = landTexture;
-                        tile.needsAutoTiling = true;
-                        break;
-                }
-                tilemap.tiles.push_back(tile);
+    auto* mapSetup = new TilemapSetupSystem();
+    mapSetup->assetsDir = "../src/assets";
+    mapSetup->tileSize  = 16;
+    s->addSystem(mapSetup);
 
 
-            }
-        }
-
-    }
 
     // --- CÁMARA ---
     Entity camE = s->createEntity("camera", 0, 0);

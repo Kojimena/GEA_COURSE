@@ -27,6 +27,7 @@ target_include_directories(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/external
         PUBLIC ${PROJECT_SOURCE_DIR}/external/rlImGui
         PUBLIC ${PROJECT_SOURCE_DIR}/external/imGui
+        PUBLIC ${PROJECT_SOURCE_DIR}/external/FastNoise
         )
 target_link_libraries(${PROJECT_NAME}
         raylib

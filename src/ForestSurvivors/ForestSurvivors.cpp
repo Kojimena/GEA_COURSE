@@ -5,15 +5,13 @@
 #include "./Game/Components/Player.h"
 #include "Game/Components/Enemy.h"
 #include "Game/Systems/Enemy.h"
-#include "Game/Components/Background.h"
 #include "Game/Systems/TilemapRender.h"
 #include "Game/Systems/AutoTiling.h"
-#include "Game/Components/Tilemap.h"
 #include "Game/Components/Camera.h"
 #include "Game/Systems/Camera.h"
 #include "Game/Systems/TilemapSetupSystem.h"
-
-
+#include "Game/Systems/IntGridRenderSystem.h"
+#include "Game/Systems/ColliderRenderSystem.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
@@ -44,6 +42,13 @@ Scene* ForestSurvivors::createSpriteScene() {
             0, // index x
             0); // index y
     girl.addComponent<PlayerComponent>();
+
+    girl.addComponent<ColliderComponent>(ColliderComponent{
+            .ox = 0.0f,
+            .oy = 0.0f,
+            .w = 16.0f * 2,  // ancho en píxeles (ajusta según tu sprite)
+            .h = 32.0f * 2   // alto en píxeles
+    });
 
     auto makeEnemy = [&](float x, float y, float l, float r) {
         Entity e = s->createEntity("enemy", x, y);
@@ -80,26 +85,23 @@ Scene* ForestSurvivors::createSpriteScene() {
     makeEnemy(1000, 300, 760, 960);
 
     // Setup
-    s->addSystem(new AutoTilingSetupSystem());  // calcula ix/iy de tiles, ya lo tienes
-    s->addSystem(new CameraSetupSystem());      // inicializa offset/zoom/world bounds
+    s->addSystem(new AutoTilingSetupSystem());
+    s->addSystem(new CameraSetupSystem());
 
     // Lógica
-    s->addSystem(new SpriteMovementSystem());   // mueve player con teclado
-    s->addSystem(new EnemyAISystem());          // IA horizontal enemigos
-    s->addSystem(new CameraFollowSystem());     // sigue al player (deadzone + clamp)
-    s->addSystem(new CameraEffectsSystem());    // aplica shake/zoom
+    s->addSystem(new SpriteMovementSystem());
+    s->addSystem(new EnemyAISystem());
+    s->addSystem(new CameraFollowSystem());
+    s->addSystem(new CameraEffectsSystem());
     s->addSystem(new CameraZoomInputSystem());
 
-
-    // Render Pass (con cámara)
+    // Render
     s->addSystem(new CameraBeginRenderSystem()); // BeginMode2D
-    s->addSystem(new TileMapRenderSystem());     // dibuja tilemap
-    s->addSystem(new SpriteSystem());            // anima/dibuja sprites
+    s->addSystem(new TileMapRenderSystem());
+    s->addSystem(new SpriteSystem());
+    s->addSystem(new IntgridRenderSystem());
+    s->addSystem(new ColliderRenderSystem());
     s->addSystem(new CameraEndRenderSystem());   // EndMode2D
-
-
-
-
 
     return s;
 }

@@ -2,10 +2,13 @@
 #include "Game/Components/TilemapData.h"
 #include "ECS/Entity.h"
 #include "FastNoiseLite.h"
+#include "Game/Components/IntGrid.h"
+
 
 void TilemapSetupSystem::setup() {
     Entity tilemapEntity = scene->createEntity(entityName.c_str(), originX, originY);
     auto& tilemap = tilemapEntity.addComponent<TileMapComponent>();
+
 
     const int H = static_cast<int>(TILEMAP_MAINMAP.size());
     const int W = static_cast<int>(TILEMAP_MAINMAP.empty() ? 0 : TILEMAP_MAINMAP[0].size());
@@ -17,6 +20,12 @@ void TilemapSetupSystem::setup() {
     Texture2D grassTexture = TextureManager::loadTexture((assetsDir + "/Nightgrass.png").c_str());
     Texture2D landTexture  = TextureManager::loadTexture((assetsDir + "/Land.png").c_str());
     Texture2D treesTexture = TextureManager::loadTexture((assetsDir + "/trees.png").c_str());
+
+    auto& intGrid = tilemapEntity.addComponent<IntGridComponent>();
+    intGrid.width  = W;
+    intGrid.height = H;
+    intGrid.grid.assign(H, std::vector<int>(W, 1)); // por defecto caminable
+
 
     FastNoiseLite noise;
     noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
@@ -33,8 +42,7 @@ void TilemapSetupSystem::setup() {
     for (int y = 0; y < tilemap.height; ++y) {
         for (int x = 0; x < tilemap.width; ++x) {
             TileComponent tile{};
-            tile.x = x;
-            tile.y = y;
+            tile.x = x; tile.y = y;
 
             float num = noise.GetNoise((float)x, (float)y);
 
@@ -43,21 +51,27 @@ void TilemapSetupSystem::setup() {
                 tile.upTexture = grassTexture;
                 tile.downTexture = landTexture;
                 tile.needsAutoTiling = true;
-            }
-            else {
+
+                intGrid.grid[y][x] = 1; // caminable
+            } else {
                 float treeVal = treeNoise.GetNoise((float)x, (float)y);
                 if (treeVal > 0.65f) {
                     tile.type = TREES;
                     tile.upTexture = treesTexture;
                     tile.downTexture = landTexture;
                     tile.needsAutoTiling = true;
+
+                    intGrid.grid[y][x] = 0; // NO caminable
                 } else {
                     tile.type = LAND;
                     tile.upTexture = landTexture;
                     tile.downTexture = {0};
                     tile.needsAutoTiling = false;
+
+                    intGrid.grid[y][x] = 1; // caminable
                 }
             }
+
             tilemap.tiles.push_back(tile);
         }
     }

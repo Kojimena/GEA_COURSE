@@ -24,7 +24,7 @@ void TilemapSetupSystem::setup() {
     auto& intGrid = tilemapEntity.addComponent<IntGridComponent>();
     intGrid.width  = W;
     intGrid.height = H;
-    intGrid.grid.assign(H, std::vector<int>(W, 1)); // por defecto caminable
+    intGrid.grid.assign(W * H, 1);
 
 
     FastNoiseLite noise;
@@ -52,7 +52,7 @@ void TilemapSetupSystem::setup() {
                 tile.downTexture = landTexture;
                 tile.needsAutoTiling = true;
 
-                intGrid.grid[y][x] = 1; // caminable
+                intGrid.grid[y * W + x] = 1; // caminable
             } else {
                 float treeVal = treeNoise.GetNoise((float)x, (float)y);
                 if (treeVal > 0.65f) {
@@ -61,14 +61,14 @@ void TilemapSetupSystem::setup() {
                     tile.downTexture = landTexture;
                     tile.needsAutoTiling = true;
 
-                    intGrid.grid[y][x] = 0; // NO caminable
+                    intGrid.grid[y * W + x] = 0; // no caminable
                 } else {
                     tile.type = LAND;
                     tile.upTexture = landTexture;
                     tile.downTexture = {0};
                     tile.needsAutoTiling = false;
 
-                    intGrid.grid[y][x] = 1; // caminable
+                    intGrid.grid[y * W + x] = 1; // caminable
                 }
             }
 

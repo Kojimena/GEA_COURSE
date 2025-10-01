@@ -14,7 +14,7 @@ void IntgridRenderSystem::render() {
 
         for (int y = 0; y < intgrid.height; ++y) {
             for (int x = 0; x < intgrid.width; ++x) {
-                if (intgrid.grid[y][x] == 0) {
+                if (intgrid.grid[y * intgrid.width + x] == 0) {
                     const float px = tmTf.position.x + x * tileScalePx;
                     const float py = tmTf.position.y + y * tileScalePx;
                     DrawRectangle(px, py, tileScalePx, tileScalePx, Fade(RED, 0.30f));

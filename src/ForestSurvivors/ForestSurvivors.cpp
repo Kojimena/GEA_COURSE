@@ -12,6 +12,8 @@
 #include "Game/Systems/TilemapSetupSystem.h"
 #include "Game/Systems/IntGridRenderSystem.h"
 #include "Game/Systems/ColliderRenderSystem.h"
+#include "Game/Systems/CollisionSystem.h"
+#include "Game/Systems/TileTriggerSystem.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
@@ -84,12 +86,16 @@ Scene* ForestSurvivors::createSpriteScene() {
     makeEnemy(1000, 300, 360, 560);
     makeEnemy(1000, 300, 760, 960);
 
+
     // Setup
     s->addSystem(new AutoTilingSetupSystem());
     s->addSystem(new CameraSetupSystem());
 
+
+
     // Lógica
     s->addSystem(new SpriteMovementSystem());
+    s->addSystem(new CollisionSystem());
     s->addSystem(new EnemyAISystem());
     s->addSystem(new CameraFollowSystem());
     s->addSystem(new CameraEffectsSystem());
@@ -100,8 +106,12 @@ Scene* ForestSurvivors::createSpriteScene() {
     s->addSystem(new TileMapRenderSystem());
     s->addSystem(new SpriteSystem());
     s->addSystem(new IntgridRenderSystem());
+
+
     s->addSystem(new ColliderRenderSystem());
     s->addSystem(new CameraEndRenderSystem());   // EndMode2D
+    s->addSystem(new TileTriggerSystem());
+
 
     return s;
 }

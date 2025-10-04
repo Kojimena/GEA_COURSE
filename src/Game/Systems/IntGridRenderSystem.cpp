@@ -17,7 +17,14 @@ void IntgridRenderSystem::render() {
                 if (intgrid.grid[y * intgrid.width + x] == 0) {
                     const float px = tmTf.position.x + x * tileScalePx;
                     const float py = tmTf.position.y + y * tileScalePx;
-                    DrawRectangle(px, py, tileScalePx, tileScalePx, Fade(RED, 0.30f));
+//                    DrawRectangle(px, py, tileScalePx, tileScalePx, Fade(RED, 0.30f));
+                }
+
+                if (intgrid.grid[y * intgrid.width + x] == 2)
+                {
+                    const float px = tmTf.position.x + x * tileScalePx;
+                    const float py = tmTf.position.y + y * tileScalePx;
+//                    DrawRectangle(px, py, tileScalePx, tileScalePx, Fade(GREEN, 0.30f));
                 }
             }
         }

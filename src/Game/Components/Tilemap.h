@@ -8,6 +8,8 @@ enum TileType {
     LAND,
     GRASS,
     TREES,
+    POISONOUS_PLANT,
+    PORTAL
 };
 
 

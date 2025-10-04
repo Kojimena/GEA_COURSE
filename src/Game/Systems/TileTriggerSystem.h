@@ -4,5 +4,5 @@
 class TileTriggerSystem : public System {
 public:
     void update() override;
-//    void render() override;
+    void render() override;
 };

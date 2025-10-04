@@ -9,6 +9,7 @@
 #include <raylib.h>
 #include <cmath>
 #include <vector>
+#include "Game/Components/HealthComponent.h"
 
 static float s_playerX = 0, s_playerY = 0;
 static int s_tileX = 0, s_tileY = 0;
@@ -66,6 +67,14 @@ void TileTriggerSystem::update() {
                 s_tileValue = intGrid.grid[s_tileY * intGrid.width + s_tileX];
                 s_outOfBounds = false;
 
+                if (s_tileValue == 2) { // planta venenosa
+                    if (scene->r.all_of<HealthComponent>(playerEntity)) {
+                        auto &health = scene->r.get<HealthComponent>(playerEntity);
+                         health.currentHealth -= health.poisonDamageRate * dt;
+                         if (health.currentHealth < 0) health.currentHealth = 0;
+                        }
+                    }
+
                 // Teletransporte
                 if (s_tileValue == 3 && s_portalCooldown <= 0 && s_portals.size() == 2) {
                     int otherPortal = (s_tileX == s_portals[0].first && s_tileY == s_portals[0].second) ? 1 : 0;
@@ -81,4 +90,14 @@ void TileTriggerSystem::update() {
             }
         }
     }
+}
+
+void TileTriggerSystem::render() {
+    auto hudView = scene->r.view<PlayerComponent, HealthComponent>();
+        for (auto e : hudView) {
+         const auto &health = hudView.get<HealthComponent>(e);
+            DrawText(TextFormat("Vida: %.0f / %.0f", health.currentHealth, health.maxHealth),
+                           10, 30, 20, WHITE);
+             }
+
 }

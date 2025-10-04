@@ -14,6 +14,7 @@
 #include "Game/Systems/ColliderRenderSystem.h"
 #include "Game/Systems/CollisionSystem.h"
 #include "Game/Systems/TileTriggerSystem.h"
+#include "Game/Components/HealthComponent.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
@@ -44,12 +45,17 @@ Scene* ForestSurvivors::createSpriteScene() {
             0, // index x
             0); // index y
     girl.addComponent<PlayerComponent>();
+    girl.addComponent<HealthComponent>(HealthComponent{
+            .maxHealth = 100.0f,
+            .currentHealth = 100.0f,
+            .poisonDamageRate = 10.0f
+    });
 
     girl.addComponent<ColliderComponent>(ColliderComponent{
             .ox = 0.0f,
             .oy = 0.0f,
-            .w = 16.0f * 2,  // ancho en píxeles (ajusta según tu sprite)
-            .h = 32.0f * 2   // alto en píxeles
+            .w = 16.0f * 2,  // ancho
+            .h = 32.0f * 2   // alto
     });
 
     auto makeEnemy = [&](float x, float y, float l, float r) {

@@ -32,12 +32,14 @@ void TilemapSetupSystem::setup() {
     srand(static_cast<unsigned int>(time(nullptr)));
 
     // portales
+    int margin = 3;
     std::vector<std::pair<int, int>> portals = {
-            {5, 5},
-            {W - 6, 5},
-            {5, H - 6},
-            {W - 6, H - 6}
+            {margin, margin},
+            {W - margin - 1, margin},
+            {margin, H - margin - 1},
+            {W - margin - 1, H - margin - 1}
     };
+
 
     std::vector<std::pair<int, int>> portalPositions;
     std::vector<int> usedIndices;

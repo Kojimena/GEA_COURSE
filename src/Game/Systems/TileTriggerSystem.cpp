@@ -11,7 +11,6 @@
 #include <vector>
 #include "Game/Components/HealthComponent.h"
 
-static float s_playerX = 0, s_playerY = 0;
 static int s_tileX = 0, s_tileY = 0;
 static int s_tileValue = -1;
 static bool s_outOfBounds = true;
@@ -57,9 +56,6 @@ void TileTriggerSystem::update() {
 
             s_tileX = static_cast<int>(std::floor(relativeX / tileScalePx));
             s_tileY = static_cast<int>(std::floor(relativeY / tileScalePx));
-
-            s_playerX = playerTf.position.x;
-            s_playerY = playerTf.position.y;
 
             if (s_tileX >= 0 && s_tileX < intGrid.width &&
                 s_tileY >= 0 && s_tileY < intGrid.height) {

@@ -36,6 +36,15 @@ void SpriteSystem::update() {
     for (auto e : view) {
         auto &sp = view.get<SpriteLayerComponent>(e);
 
+        if (sp.texture.id == 0) {
+            sp.texture = TextureManager::loadTexture(sp.path);
+            if (sp.texture.id == 0) {
+                std::cerr << "[Sprite][ERROR] No se cargó la textura (lazy): " << sp.path << "\n";
+                // si no cargó, saltamos animación para evitar usar datos inválidos
+                continue;
+            }
+        }
+
         if (sp.animationFrame <= 0) continue;
 
         int cycleMs = sp.animationDuration;
@@ -57,6 +66,14 @@ void SpriteSystem::render() {
     for (auto entity : view) {
         const auto& transform = view.get<TransformComponent>(entity);
         const auto& sprite    = view.get<SpriteLayerComponent>(entity);
+
+        if (sprite.texture.id == 0) {
+            const_cast<SpriteLayerComponent&>(sprite).texture = TextureManager::loadTexture(sprite.path);
+            if (sprite.texture.id == 0) {
+                std::cerr << "[Sprite][ERROR] No se cargó la textura (render): " << sprite.path << "\n";
+                continue;
+            }
+        }
 
         Rectangle src = {
                 (float)sprite.ix * (float)sprite.frameW,

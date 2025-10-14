@@ -15,6 +15,7 @@
 #include "Game/Systems/CollisionSystem.h"
 #include "Game/Systems/TileTriggerSystem.h"
 #include "Game/Components/HealthComponent.h"
+#include "Game/Systems/EnemySpawnSystem.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
@@ -31,7 +32,7 @@ Scene* ForestSurvivors::createSpriteScene() {
     {
     }
 
-    // girl player entity
+    // PLAYER
     Entity girl = s->createEntity("girl", 100, 100);
     girl.addComponent<SpriteLayerComponent>(
             "../src/assets/walk.png",
@@ -58,18 +59,19 @@ Scene* ForestSurvivors::createSpriteScene() {
             .h = 32.0f * 2   // alto
     });
 
-    auto makeEnemy = [&](float x, float y, float l, float r) {
-        Entity e = s->createEntity("enemy", x, y);
-        e.addComponent<SpriteLayerComponent>(
-                "../src/assets/enemy.png",
-                16,16, 2, 8, 600, 0, 0, 0, 0
-        );
+//    auto makeEnemy = [&](float x, float y, float l, float r) {
+//        Entity e = s->createEntity("enemy", x, y);
+//        e.addComponent<SpriteLayerComponent>(
+//                "../src/assets/enemy.png",
+//                16,16, 2, 8, 600, 0, 0, 0, 0
+//        );
+//
+//        e.addComponent<EnemyAIComponent>(EnemyAIComponent{
+//                .speed = 60.0f, .leftX = l, .rightX = r, .dir = 1
+//        });
+//        return e;
+//    };
 
-        e.addComponent<EnemyAIComponent>(EnemyAIComponent{
-                .speed = 60.0f, .leftX = l, .rightX = r, .dir = 1
-        });
-        return e;
-    };
 
     auto* mapSetup = new TilemapSetupSystem();
     mapSetup->assetsDir = "../src/assets";
@@ -89,8 +91,8 @@ Scene* ForestSurvivors::createSpriteScene() {
 
 
 
-    makeEnemy(1000, 300, 360, 560);
-    makeEnemy(1000, 300, 760, 960);
+//    makeEnemy(1000, 300, 360, 560);
+//    makeEnemy(1000, 300, 760, 960);
 
 
     // Setup
@@ -99,16 +101,19 @@ Scene* ForestSurvivors::createSpriteScene() {
 
 
 
+
     // Lógica
     s->addSystem(new SpriteMovementSystem());
     s->addSystem(new CollisionSystem());
-    s->addSystem(new EnemyAISystem());
+    s->addSystem(new EnemySpawnSystem());
     s->addSystem(new CameraFollowSystem());
     s->addSystem(new CameraEffectsSystem());
     s->addSystem(new CameraZoomInputSystem());
 
     // Render
     s->addSystem(new CameraBeginRenderSystem()); // BeginMode2D
+
+
     s->addSystem(new TileMapRenderSystem());
     s->addSystem(new SpriteSystem());
     s->addSystem(new IntgridRenderSystem());

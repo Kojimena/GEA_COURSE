@@ -9,15 +9,24 @@
 #include "raylib.h"
 #include <cmath>
 #include <cstdint>
+#include <random>
 
 // ===================== CONFIG  =====================
 static float   spawnInterval = 2.0f;  // timer
-static int     p1_enemiesCount = 4;     // cant enemigos
+
+static int     p1_enemiesCount = 4;     // cant enemigos línea
+static int    p2_enemiesCount = 8;     // cant enemigos círculo
+static int     p3_enemiesCount = 6;    // cant enemigos random
+
 static float   lineSpacing     = 36.0f;    // separación px
 
 static int     s_lastTx          = INT32_MIN;
 static int     s_lastTy          = INT32_MIN;
 static int     s_lastTileValue   = -9999;
+
+static const char* p1_sprite = "../src/assets/snake.png";      // sprite línea
+static const char* p2_sprite = "../src/assets/bat.png";    // sprite círculo
+static const char* p3_sprite = "../src/assets/beatle.png";    // sprite aleatorio
 
 
 void EnemySpawnSystem::setup() {
@@ -25,11 +34,11 @@ void EnemySpawnSystem::setup() {
     spawnInterval = spawnInterval; // usa la config de arriba
 }
 
-static inline void SpawnEnemyAt(Scene* scene, float x, float y) {
+static inline void SpawnEnemyAt(Scene* scene, float x, float y, const char* spritePath, float speed) {
     Entity enemy = scene->createEntity("enemy", x, y);
 
     enemy.addComponent<SpriteLayerComponent>(
-            "../src/assets/enemy.png",
+            spritePath,
             16, 16,
             2,
             8,
@@ -37,13 +46,22 @@ static inline void SpawnEnemyAt(Scene* scene, float x, float y) {
             0, 0, 0, 0
     );
 
-    enemy.addComponent<ColliderComponent>(ColliderComponent{
-            .ox = 0.0f, .oy = 0.0f, .w = 32.0f, .h = 32.0f
-    });
-
     enemy.addComponent<EnemyAIComponent>(EnemyAIComponent{
-            .speed = 60.0f, .leftX = x - 40.0f, .rightX = x + 40.0f, .dir = 1
+            .speed = speed, .leftX = x - 40.0f, .rightX = x + 40.0f, .dir = 1
     });
+}
+
+static inline void SpawnCircleAround(Scene* scene, Vector2 center) {
+    int   n      = (p2_enemiesCount <= 0) ? 1 : p2_enemiesCount;
+    float angleStep = 2.0f * 3.14159265f / (float)n;
+    float radius    = lineSpacing; // radio del círculo
+
+    for (int i = 0; i < n; ++i) {
+        float angle = i * angleStep;
+        float dx = cosf(angle) * radius;
+        float dy = sinf(angle) * radius;
+        SpawnEnemyAt(scene, center.x + dx, center.y + dy, p2_sprite, 30.0f);
+    }
 }
 
 static inline void SpawnLineAround(Scene* scene, Vector2 center) {
@@ -54,7 +72,21 @@ static inline void SpawnLineAround(Scene* scene, Vector2 center) {
     for (int i = 0; i < n; ++i) {
         float dx = start + i * lineSpacing;
         float dy =  0.0f;
-        SpawnEnemyAt(scene, center.x + dx, center.y + dy);
+        SpawnEnemyAt(scene, center.x + dx, center.y + dy, p1_sprite, 50.0f);
+    }
+}
+
+static inline void SpawnRandomAround(Scene* scene, Vector2 center) {
+    int n = (p3_enemiesCount <= 0) ? 1 : p3_enemiesCount;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(-200.0, 200.0);
+
+    for (int i = 0; i < n; ++i) {
+        float spawnX = center.x + dis(gen);
+        float spawnY = center.y + dis(gen);
+        SpawnEnemyAt(scene, spawnX, spawnY, p3_sprite, 40.0f);
     }
 }
 
@@ -114,8 +146,15 @@ void EnemySpawnSystem::update() {
             case 2: { // PLANTA VENENOSA- LÍNEA
                 SpawnLineAround(scene, playerPos);
             } break;
-                // case 1: // GRASS -
-                // case 3: // PORTAL -
+            case 3: { // PORTAL -CÍRCULO
+                SpawnCircleAround(scene, playerPos);
+            } break;
+            case 4: { // TIERRA - RANDOM
+                if (spawnTimer >= spawnInterval) {
+                    spawnTimer = 0.0f;
+                    SpawnRandomAround(scene, playerPos);
+                }
+            } break;
             default:
                 // otros tiles
                 break;

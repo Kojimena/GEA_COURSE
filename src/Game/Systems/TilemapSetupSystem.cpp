@@ -122,7 +122,7 @@ void TilemapSetupSystem::setup() {
                     tile.upTexture = landTexture;
                     tile.downTexture = {0};
                     tile.needsAutoTiling = false;
-                    intGrid.grid[y * W + x] = 1;
+                    intGrid.grid[y * W + x] = 4;
                 }
             }
 

@@ -105,6 +105,7 @@ Scene* ForestSurvivors::createSpriteScene() {
     // Lógica
     s->addSystem(new SpriteMovementSystem());
     s->addSystem(new CollisionSystem());
+    s->addSystem(new EnemyAISystem());
     s->addSystem(new EnemySpawnSystem());
     s->addSystem(new CameraFollowSystem());
     s->addSystem(new CameraEffectsSystem());

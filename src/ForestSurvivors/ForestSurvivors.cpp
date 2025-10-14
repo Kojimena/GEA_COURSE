@@ -59,18 +59,6 @@ Scene* ForestSurvivors::createSpriteScene() {
             .h = 32.0f * 2   // alto
     });
 
-//    auto makeEnemy = [&](float x, float y, float l, float r) {
-//        Entity e = s->createEntity("enemy", x, y);
-//        e.addComponent<SpriteLayerComponent>(
-//                "../src/assets/enemy.png",
-//                16,16, 2, 8, 600, 0, 0, 0, 0
-//        );
-//
-//        e.addComponent<EnemyAIComponent>(EnemyAIComponent{
-//                .speed = 60.0f, .leftX = l, .rightX = r, .dir = 1
-//        });
-//        return e;
-//    };
 
 
     auto* mapSetup = new TilemapSetupSystem();
@@ -87,12 +75,7 @@ Scene* ForestSurvivors::createSpriteScene() {
     cam.deadzoneW = 160.0f;
     cam.deadzoneH = 100.0f;
     cam.targetZoom = 1.0f;
-
-
-
-
-//    makeEnemy(1000, 300, 360, 560);
-//    makeEnemy(1000, 300, 760, 960);
+    
 
 
     // Setup

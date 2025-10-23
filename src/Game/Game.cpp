@@ -26,14 +26,14 @@ void Game::setup() {
 }
 
 void Game::frameStart() {
-    std::cout << "Frame Start:" << frameCount << std::endl;
+//    std::cout << "Frame Start:" << frameCount << std::endl;
     dT = GetFrameTime(); // seconds
 }
 
 void Game::frameEnd() {
     frameCount++;
     FPS = static_cast<float>(GetFPS());
-    std::cout << "Frame End: " << frameCount << ", FPS: " << FPS << std::endl;
+//    std::cout << "Frame End: " << frameCount << ", FPS: " << FPS << std::endl;
 }
 
 void Game::handleEvents() {

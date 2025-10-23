@@ -16,6 +16,7 @@
 #include "Game/Systems/TileTriggerSystem.h"
 #include "Game/Components/HealthComponent.h"
 #include "Game/Systems/EnemySpawnSystem.h"
+#include "Game/Systems/MovementPatternSystem.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
@@ -88,6 +89,7 @@ Scene* ForestSurvivors::createSpriteScene() {
     // Lógica
     s->addSystem(new SpriteMovementSystem());
     s->addSystem(new CollisionSystem());
+    s->addSystem(new MovementPatternSystem());
     s->addSystem(new EnemyAISystem());
     s->addSystem(new EnemySpawnSystem());
     s->addSystem(new CameraFollowSystem());

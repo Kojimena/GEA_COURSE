@@ -32,7 +32,7 @@ void Scene::addSystem(System* system)
 
 void Scene::setup()
 {
-    std::cout << "Scene Setup" << std::endl;
+//    std::cout << "Scene Setup" << std::endl;
     for (auto sys : systems) {
         sys->setup();
     }
@@ -40,7 +40,7 @@ void Scene::setup()
 
 void Scene::update()
 {
-    std:: cout << "Scene Update" << std::endl;
+//    std:: cout << "Scene Update" << std::endl;
     for (auto sys : systems) {
         sys->update();
     }
@@ -48,7 +48,7 @@ void Scene::update()
 
 void Scene::render()
 {
-    std::cout << "Scene Render" << std::endl;
+//    std::cout << "Scene Render" << std::endl;
     for (auto sys : systems) {
         sys->render();
     }

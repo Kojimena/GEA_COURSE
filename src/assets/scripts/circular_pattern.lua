@@ -9,8 +9,8 @@ function Init(params)
     config.orbitAroundPlayer = params.orbitAroundPlayer or false
     config.orbitCenterX = params.orbitCenterX or 0
     config.orbitCenterY = params.orbitCenterY or 0
-    config.attackSpeed = 100
-    config.attackInterval = 1
+    config.attackSpeed = params.attackSpeed or 100
+    config.attackInterval = params.attackInterval or 3
 
     angle = math.random() * math.pi * 2
     attackTimer = math.random() * config.attackInterval

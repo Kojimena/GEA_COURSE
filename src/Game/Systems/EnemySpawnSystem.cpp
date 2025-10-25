@@ -60,6 +60,8 @@ static inline void SpawnCircularEnemy(Scene* scene, Vector2 center, float radius
     pattern.orbitAroundPlayer = aroundPlayer;
     pattern.orbitCenterX = center.x;
     pattern.orbitCenterY = center.y;
+    pattern.attackSpeed = 60.0f;
+    pattern.attackInterval = 3.0f;
 }
 
 static inline void SpawnPatrolEnemy(Scene* scene, float x, float y,

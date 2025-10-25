@@ -19,6 +19,8 @@ struct MovementPatternComponent {
     bool orbitAroundPlayer = false;
     float orbitCenterX = 0.0f;
     float orbitCenterY = 0.0f;
+    float attackSpeed = 80.0f;
+    float attackInterval = 2.0f;
 
     // Patrol movement
     std::vector<std::pair<float, float>> waypoints;

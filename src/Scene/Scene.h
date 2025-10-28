@@ -7,6 +7,7 @@
 
 class Entity;
 class System;
+class Game;
 
 class Scene {
 private:
@@ -18,6 +19,10 @@ public:
     ~Scene();
 
     entt::registry r;
+
+    Game* game = nullptr;
+    std::string getName() const { return name; }
+
 
     Entity createEntity(
             const std::string& name = "NO NAME",

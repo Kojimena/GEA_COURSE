@@ -1,11 +1,11 @@
 #include "Game.h"
+#include "Scene/Scene.h"
 #include "ImGui/ImGui.h"
 #include <format>
 #include <iostream>
 
 Game::Game(const char* title, int width, int height)
-        : screen_width(width), screen_height(height)
-{
+        : screen_width(width), screen_height(height) {
     InitWindow(width, height, title);
     SetTargetFPS(60);
     std::cout << "Game start" << std::endl;
@@ -13,9 +13,14 @@ Game::Game(const char* title, int width, int height)
     frameCount = 0;
     dT = 0.0f;
     FPS = 0.0f;
+    currentScene = nullptr;
 }
 
 Game::~Game() {
+    for (auto& pair : scenes) {
+        delete pair.second;
+    }
+    scenes.clear();
     clean();
 }
 
@@ -26,14 +31,12 @@ void Game::setup() {
 }
 
 void Game::frameStart() {
-//    std::cout << "Frame Start:" << frameCount << std::endl;
-    dT = GetFrameTime(); // seconds
+    dT = GetFrameTime();
 }
 
 void Game::frameEnd() {
     frameCount++;
     FPS = static_cast<float>(GetFPS());
-//    std::cout << "Frame End: " << frameCount << ", FPS: " << FPS << std::endl;
 }
 
 void Game::handleEvents() {
@@ -57,7 +60,6 @@ void Game::render() {
     }
 
     DrawText(TextFormat("FPS: %.2f", FPS), 10, 10, 20, DARKGRAY);
-
 
     EndDrawing();
 }
@@ -91,7 +93,22 @@ void Game::run() {
 }
 
 void Game::setScene(Scene* newScene) {
-    currentScene = std::move(newScene);
+    if (newScene) {
+        currentScene = newScene;
+        scenes[newScene->getName()] = newScene;
+        newScene->setup();
+        std::cout << "Escena establecida: " << newScene->getName() << std::endl;
+    }
+}
+
+void Game::changeScene(const std::string& sceneName) {
+    auto it = scenes.find(sceneName);
+    if (it != scenes.end()) {
+        std::cout << "Cambiando a escena: " << sceneName << std::endl;
+        currentScene = it->second;
+    } else {
+        std::cout << "Error: Escena '" << sceneName << "' no encontrada" << std::endl;
+    }
 }
 
 Scene* Game::getCurrentScene() const {

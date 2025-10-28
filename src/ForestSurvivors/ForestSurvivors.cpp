@@ -17,10 +17,23 @@
 #include "Game/Components/HealthComponent.h"
 #include "Game/Systems/EnemySpawnSystem.h"
 #include "Game/Systems/MovementPatternSystem.h"
+#include "Game/Systems/DeathSystem.h"
+#include "Game/Systems/PlayerEnemyCollisionSystem.h"
+#include "Game/Systems/HPRenderSystem.h"
+#include "Game/Components/TextComponent.h"
+#include "Game/Systems/TextRenderSystem.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
+    Scene* gameOverScene = createGameOverScene();
+
+    gameplayScene->game = this;
+    gameOverScene->game = this;
+
     setScene(gameplayScene);
+
+    scenes["GameOver"] = gameOverScene;
+
 }
 
 ForestSurvivors::~ForestSurvivors() {
@@ -50,7 +63,9 @@ Scene* ForestSurvivors::createSpriteScene() {
     girl.addComponent<HealthComponent>(HealthComponent{
             .maxHealth = 100.0f,
             .currentHealth = 100.0f,
-            .poisonDamageRate = 10.0f
+            .poisonDamageRate = 10.0f,
+            .lastDamageTime = 0.0f,
+            .damageCooldown = 1.0f
     });
 
     girl.addComponent<ColliderComponent>(ColliderComponent{
@@ -91,6 +106,8 @@ Scene* ForestSurvivors::createSpriteScene() {
     s->addSystem(new CollisionSystem());
     s->addSystem(new MovementPatternSystem());
     s->addSystem(new EnemyAISystem());
+    s->addSystem(new PlayerEnemyCollisionSystem());
+    s->addSystem(new DeathSystem());
     s->addSystem(new EnemySpawnSystem());
     s->addSystem(new CameraFollowSystem());
     s->addSystem(new CameraEffectsSystem());
@@ -102,6 +119,7 @@ Scene* ForestSurvivors::createSpriteScene() {
 
     s->addSystem(new TileMapRenderSystem());
     s->addSystem(new SpriteSystem());
+    s->addSystem(new HPRenderSystem());
     s->addSystem(new IntgridRenderSystem());
 
 
@@ -113,4 +131,21 @@ Scene* ForestSurvivors::createSpriteScene() {
     return s;
 }
 
+Scene* ForestSurvivors::createGameOverScene() {
+    Scene* s = new Scene("GameOver");
+
+    Entity text = s->createEntity("GameOverText", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 20);
+    text.addComponent<TextComponent>(
+            "Game Over",
+            80,
+            RED
+    );
+
+    s->addSystem(new TextRenderSystem());
+    return s;
+}
+
+
+
 inline float f(int x) { return static_cast<float>(x); }
+

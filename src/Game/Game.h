@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include "Scene/Scene.h"
 
+
 class Game {
 public:
     Game(const char* title, int width, int height);
@@ -21,6 +22,7 @@ public:
 
     void setScene(Scene* newScene);
     Scene* getCurrentScene() const;
+    virtual void changeScene(const std::string& sceneName);
 
 protected:
     bool isRunning = false;
@@ -30,6 +32,8 @@ protected:
     float dT = 0.0f;
     float FPS = 0.0f;
     int frameCount = 0;
+
+    std::map<std::string, Scene*> scenes;
 
     Scene* currentScene;
 };

@@ -45,7 +45,7 @@ void PlayerEnemyCollisionSystem::update() {
             if (CheckCollisionRecs(playerRect, enemyRect)) {
                 playerHealth.currentHealth -= enemyDamage;
                 playerHealth.lastDamageTime = currentTime;
-                
+
                 break;
             }
         }

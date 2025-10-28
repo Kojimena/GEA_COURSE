@@ -6,5 +6,5 @@ public:
     void update() override;
 
 private:
-    int enemyDamage = 2;
+    int enemyDamage = 5;
 };

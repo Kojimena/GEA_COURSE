@@ -16,7 +16,7 @@ static float   spawnInterval = 3.0f;
 
 static int     p1_enemiesCount = 3;
 static int     p2_enemiesCount = 5;
-static int     p3_enemiesCount = 4;
+static int     p3_enemiesCount = 8;
 
 static float   lineSpacing = 60.0f;
 

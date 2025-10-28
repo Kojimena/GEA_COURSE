@@ -38,8 +38,8 @@ void PlayerEnemyCollisionSystem::update() {
             Rectangle enemyRect = {
                     enemyTf.position.x,
                     enemyTf.position.y,
-                    32.0f,
-                    32.0f
+                    16.0f,
+                    16.0f
             };
 
             if (CheckCollisionRecs(playerRect, enemyRect)) {

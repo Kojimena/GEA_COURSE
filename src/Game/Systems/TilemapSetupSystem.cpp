@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 
 void TilemapSetupSystem::setup() {
     Entity tilemapEntity = scene->createEntity(entityName.c_str(), originX, originY);
@@ -23,6 +24,7 @@ void TilemapSetupSystem::setup() {
     Texture2D treesTexture = TextureManager::loadTexture((assetsDir + "/trees.png").c_str());
     Texture2D poisonousTexture = TextureManager::loadTexture((assetsDir + "/venenous.png").c_str());
     Texture2D portalTexture = TextureManager::loadTexture((assetsDir + "/portal.png").c_str());
+    Texture2D winTexture = TextureManager::loadTexture((assetsDir + "/win_tile.png").c_str());
 
     auto& intGrid = tilemapEntity.addComponent<IntGridComponent>();
     intGrid.width = W;
@@ -54,6 +56,34 @@ void TilemapSetupSystem::setup() {
         portalPositions.push_back(portals[randomIndex]);
     }
 
+    // textura ganadora
+    auto isPortal = [&](int px, int py) {
+        return std::find(portalPositions.begin(), portalPositions.end(),
+                         std::make_pair(px, py)) != portalPositions.end();
+    };
+
+        const float minDist = 0.35f * std::sqrt(float(W * W + H * H));
+
+        std::vector<std::pair<int,int>> candidates;
+        candidates.reserve(W * H);
+
+        for (int y = 0; y < H; ++y) {
+            for (int x = 0; x < W; ++x) {
+                if (x <= 2 && y <= 2) continue;
+                if (isPortal(x, y)) continue;
+
+                float d = std::sqrt(float(x * x + y * y));
+                if (d >= minDist) {
+                    candidates.emplace_back(x, y);
+                }
+            }
+        }
+    std::pair<int,int> winPosition = candidates.empty()
+                                     ? std::make_pair(W - 2, H - 2)
+                                     : candidates[rand() % candidates.size()];
+
+
+
     FastNoiseLite noise;
     noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
     noise.SetSeed(static_cast<int>(time(nullptr)));
@@ -82,6 +112,16 @@ void TilemapSetupSystem::setup() {
                 tile.downTexture = landTexture;
                 tile.needsAutoTiling = true;
                 intGrid.grid[y * W + x] = 1;
+            }
+            else if (x == winPosition.first && y == winPosition.second) {
+                tile.type = WIN_TILE;
+                tile.upTexture = winTexture;
+                tile.downTexture = landTexture;
+                tile.isAnimated = true;
+                tile.ixa = 0;
+                tile.iya = 0;
+                tile.needsAutoTiling = false;
+                intGrid.grid[y * W + x] = 5;
             }
             else if (std::find(portalPositions.begin(), portalPositions.end(),
                                std::make_pair(x, y)) != portalPositions.end()) {

@@ -13,4 +13,5 @@ public:
 private:
     Scene* createSpriteScene();
     Scene* createGameOverScene();
+    Scene* createWinScene();
 };

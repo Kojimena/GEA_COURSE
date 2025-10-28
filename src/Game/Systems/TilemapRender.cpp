@@ -27,6 +27,9 @@ void TileMapRenderSystem::render() {
                 if (t.needsAutoTiling) {
                     const Rectangle srcMask = { (float)t.ix, (float)t.iy, tileW, tileH };
                     DrawTexturePro(t.upTexture, srcMask, dst, {0,0}, 0.0f, WHITE);
+                } else if (t.isAnimated) {
+                    const Rectangle srcMask = { (float)t.ixa, (float)t.iya, tileW, tileH };
+                    DrawTexturePro(t.upTexture, srcMask, dst, {0,0}, 0.0f, WHITE);
                 } else {
                     DrawTexturePro(t.upTexture, srcFull, dst, {0,0}, 0.0f, WHITE);
                 }
@@ -34,4 +37,3 @@ void TileMapRenderSystem::render() {
         }
     }
 }
-

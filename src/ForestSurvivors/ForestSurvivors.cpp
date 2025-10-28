@@ -22,17 +22,22 @@
 #include "Game/Systems/HPRenderSystem.h"
 #include "Game/Components/TextComponent.h"
 #include "Game/Systems/TextRenderSystem.h"
+#include "Game/Systems/VictorySystem.h"
+#include "Game/Systems/TileAnimationSystem.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
     Scene* gameOverScene = createGameOverScene();
+    Scene* winScene = createWinScene();
 
     gameplayScene->game = this;
     gameOverScene->game = this;
+    winScene->game = this;
 
     setScene(gameplayScene);
 
     scenes["GameOver"] = gameOverScene;
+    scenes["Victory"] = winScene;
 
 }
 
@@ -109,6 +114,7 @@ Scene* ForestSurvivors::createSpriteScene() {
     s->addSystem(new PlayerEnemyCollisionSystem());
     s->addSystem(new DeathSystem());
     s->addSystem(new EnemySpawnSystem());
+    s->addSystem(new TileAnimationSystem());
     s->addSystem(new CameraFollowSystem());
     s->addSystem(new CameraEffectsSystem());
     s->addSystem(new CameraZoomInputSystem());
@@ -120,6 +126,8 @@ Scene* ForestSurvivors::createSpriteScene() {
     s->addSystem(new TileMapRenderSystem());
     s->addSystem(new SpriteSystem());
     s->addSystem(new HPRenderSystem());
+    s->addSystem(new VictorySystem());
+
     s->addSystem(new IntgridRenderSystem());
 
 
@@ -144,6 +152,25 @@ Scene* ForestSurvivors::createGameOverScene() {
     s->addSystem(new TextRenderSystem());
     return s;
 }
+
+Scene* ForestSurvivors::createWinScene() {
+    Scene* s = new Scene("Victory");
+
+    Entity text = s->createEntity("Wintext", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 20);
+    text.addComponent<TextComponent>(
+            "You Win!",
+            80,
+            GREEN
+    );
+    DrawRectangle(screen_width / 2 - 250, screen_height / 2 + 30, 500, 3, GOLD);
+
+    DrawRectangle(screen_width / 2 - 250, screen_height / 2 + 35, 500, 3, GOLD);
+
+
+    s->addSystem(new TextRenderSystem());
+    return s;
+}
+
 
 
 

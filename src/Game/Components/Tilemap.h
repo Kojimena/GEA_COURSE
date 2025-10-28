@@ -9,7 +9,8 @@ enum TileType {
     GRASS,
     TREES,
     POISONOUS_PLANT,
-    PORTAL
+    PORTAL,
+    WIN_TILE
 };
 
 
@@ -23,6 +24,10 @@ struct TileComponent {
     bool needsAutoTiling = false;
     int ix = 0;
     int iy = 0;
+
+    int ixa = 0, iya = 0;
+
+    bool isAnimated = false;
 };
 
 struct TileMapComponent {

@@ -24,6 +24,7 @@
 #include "Game/Systems/TextRenderSystem.h"
 #include "Game/Systems/VictorySystem.h"
 #include "Game/Systems/TileAnimationSystem.h"
+#include "Game/Systems/MusicSystem.h"
 
 ForestSurvivors::ForestSurvivors() : Game("ForestSurvivors", SCREEN_WIDTH, SCREEN_HEIGHT) {
     Scene* gameplayScene = createSpriteScene();
@@ -100,6 +101,7 @@ Scene* ForestSurvivors::createSpriteScene() {
 
 
     // Setup
+    s->addSystem(new MusicSystem());
     s->addSystem(new AutoTilingSetupSystem());
     s->addSystem(new CameraSetupSystem());
 
